@@ -734,8 +734,13 @@ form.addEventListener('submit', async (e) => {
       body: JSON.stringify(data)
     });
     const out = await res.json();
-    if (!out.ok) throw new Error(out.message || '寫入失敗');
-    form.style.display = 'none';
+    if (!out.ok) {
+      show(`資料未能存檔（${out.message || '後端錯誤'}）。請撥打 ${CONTACT} 由專人協助登記。`, 'err');
+      btn.disabled = false; btn.textContent = '送出應徵資料';
+      return;
+    }
+    form.querySelectorAll('fieldset').forEach(el => el.style.display = 'none');
+    btn.style.display = 'none';
     show(`資料已送出，感謝你的應徵。公司會進行初步審核，符合條件者將以電話或 Email 通知面談與體能測驗時間。若逾期未接到通知，也歡迎撥打 ${CONTACT} 詢問。`, 'ok');
     msg.scrollIntoView({ block: 'center' });
   } catch (err) {
